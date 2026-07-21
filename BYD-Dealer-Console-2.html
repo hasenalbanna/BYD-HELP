@@ -270,7 +270,8 @@
     <button class="tab-btn" data-tab="discount">Campaign Discount</button>
     <button class="tab-btn" data-tab="showrooms">Showroom Stock</button>
     <button class="tab-btn" data-tab="service">Service Centres</button>
-    <button class="tab-btn" data-tab="admin" style="color:var(--amber);">Admin Panel</button>
+    <button class="tab-btn" data-tab="admin" id="adminTabBtn" style="color:var(--amber); display:none;">Admin Panel</button>
+    <button class="tab-btn" id="loginBtn" style="margin-left:auto; border:1px solid var(--accent); color:var(--accent);">Admin Login</button>
   </nav>
 </header>
 
@@ -404,8 +405,8 @@
     
     <div class="banner" style="background:var(--accent-soft); border-color:var(--accent); margin-bottom:20px;">
       <div class="dot" style="background:var(--accent);"></div>
-      <div><strong style="color:var(--accent);">Authentication Pending</strong>
-        <p style="color:var(--text); margin-top:4px;">Firebase Auth will be configured to assign <strong>Main Admin</strong> and <strong>Super Admin</strong> roles based on emails provided.</p>
+      <div><strong style="color:var(--accent);">Active Session</strong>
+        <p style="color:var(--text); margin-top:4px;">Logged in as: <strong id="adminEmailDisplay">—</strong> <span id="adminRoleDisplay" style="margin-left:8px;"></span></p>
       </div>
     </div>
 
@@ -442,6 +443,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDKvR8LZlItjtGcieqGBgURPnPkw4iEOwI",
@@ -455,6 +457,44 @@
 
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  document.getElementById('loginBtn').addEventListener('click', () => {
+    if (auth.currentUser) {
+      signOut(auth).catch(err => alert("Logout failed: " + err.message));
+    } else {
+      signInWithPopup(auth, provider).catch(err => alert("Login failed: " + err.message));
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    const adminTabBtn = document.getElementById('adminTabBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    
+    if (user) {
+      loginBtn.textContent = "Logout";
+      const email = user.email;
+      let role = "Guest";
+      
+      if (email === "hasenalbanna123@gmail.com") role = "Super Admin";
+      else if (email === "mohozafrath@gmail.com") role = "Main Admin";
+      
+      if (role !== "Guest") {
+        adminTabBtn.style.display = "inline-block";
+        document.getElementById("adminRoleDisplay").innerHTML = `<span class="variant-tag" style="background:var(--amber-soft); color:var(--amber);">${role}</span>`;
+        document.getElementById("adminEmailDisplay").textContent = email;
+      } else {
+        adminTabBtn.style.display = "none";
+      }
+    } else {
+      loginBtn.textContent = "Admin Login";
+      adminTabBtn.style.display = "none";
+      if (adminTabBtn.classList.contains('active')) {
+        document.querySelector('[data-tab="shipment"]').click();
+      }
+    }
+  });
 </script>
 <script>
 /* ===================== DATA ===================== */

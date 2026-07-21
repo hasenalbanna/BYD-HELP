@@ -12,5 +12,8 @@
         "destination": "/BYD-Dealer-Console-2.html"
       }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }
