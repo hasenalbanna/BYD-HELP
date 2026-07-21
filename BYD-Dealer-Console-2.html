@@ -295,7 +295,6 @@
     <button class="tab-btn" data-tab="discount">Campaign Discount</button>
     <button class="tab-btn" data-tab="showrooms">Showroom Stock</button>
     <button class="tab-btn" data-tab="service">Service Centres</button>
-    <button class="tab-btn" data-tab="admin" id="adminTabBtn" style="color:var(--amber); display:none;">Admin Panel</button>
     <button class="tab-btn" id="themeToggleBtn" style="margin-left:auto; background:#000; color:#fff; border:1px solid #333;">Light Mode</button>
     <button class="tab-btn" id="loginBtn" style="margin-left:8px; border:1px solid var(--accent); color:var(--accent);">Admin Login</button>
   </nav>
@@ -305,7 +304,10 @@
 
   <!-- SHIPMENT -->
   <section class="panel active" id="panel-shipment">
-    <h2 class="section-title">Shipment Info</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="section-title" style="margin:0;">Shipment Info</h2>
+      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Shipment Info', SHIPMENT)">Edit</button>
+    </div>
     <p class="section-desc">Colour availability by model and trim, with next shipment status.</p>
     <div class="toolbar">
       <div class="search">
@@ -320,7 +322,10 @@
 
   <!-- PRICING -->
   <section class="panel" id="panel-pricing">
-    <h2 class="section-title">Price List</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="section-title" style="margin:0;">Price List</h2>
+      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Price List', PRICING)">Edit</button>
+    </div>
     <p class="section-desc">Current pricing vs. new pricing without surcharge.</p>
     <div class="toolbar">
       <div class="search">
@@ -342,7 +347,10 @@
 
   <!-- DISCOUNT -->
   <section class="panel" id="panel-discount">
-    <h2 class="section-title">Campaign Discount</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="section-title" style="margin:0;">Campaign Discount</h2>
+      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Campaign Discount', DISCOUNT)">Edit</button>
+    </div>
     <div class="banner">
       <div class="dot"></div>
       <div><strong>Garu Saru Campaign only.</strong>
@@ -370,7 +378,10 @@
 
   <!-- SHOWROOMS -->
   <section class="panel" id="panel-showrooms">
-    <h2 class="section-title">Showroom Stock</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="section-title" style="margin:0;">Showroom Stock</h2>
+      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Showroom Stock', SHOWROOMS)">Edit</button>
+    </div>
     <p class="section-desc">Models and colours currently on display at each showroom.</p>
     <div class="toolbar">
       <div class="search">
@@ -385,7 +396,10 @@
 
   <!-- SERVICE CENTRES -->
   <section class="panel" id="panel-service">
-    <h2 class="section-title">Service Centres</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="section-title" style="margin:0;">Service Centres</h2>
+      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Service Centres', null)">Edit</button>
+    </div>
     <p class="section-desc">Sealion (SL) variant drivetrains, service routing, and which service centre carries each model. Wattala and Colombo are service centres, not showrooms.</p>
 
     <h3 class="sub-title">Service Schedule</h3>
@@ -424,45 +438,6 @@
     <div class="bar-chart" id="serviceBarChart"></div>
   </section>
 
-  <!-- ADMIN PANEL -->
-  <section class="panel" id="panel-admin">
-    <h2 class="section-title">Admin Panel</h2>
-    <p class="section-desc">Manage app details and view access logs. Access levels are restricted by email.</p>
-    
-    <div class="banner" style="background:var(--accent-soft); border-color:var(--accent); margin-bottom:20px;">
-      <div class="dot" style="background:var(--accent);"></div>
-      <div><strong style="color:var(--accent);">Active Session</strong>
-        <p style="color:var(--text); margin-top:4px;">Logged in as: <strong id="adminEmailDisplay">—</strong> <span id="adminRoleDisplay" style="margin-left:8px;"></span></p>
-      </div>
-    </div>
-
-    <h3 class="sub-title">Super Admin Controls</h3>
-    <p class="section-desc" style="margin-bottom:12px;">Monitor app visitors and manage all system data.</p>
-    <div class="table-card" style="margin-bottom:26px;">
-      <table>
-        <thead><tr><th>User Email</th><th>Visit Date & Time</th><th>Role</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td>visitor@example.com</td><td>2026-07-21 14:30</td><td><span class="variant-tag">Guest</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Revoke</button></td></tr>
-          <tr><td>super@bydhelp.com</td><td>2026-07-21 14:15</td><td><span class="variant-tag" style="background:var(--amber-soft); color:var(--amber);">Super Admin</span></td><td>-</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div id="mainAdminEditorSection">
-      <h3 class="sub-title">Main Admin Editor</h3>
-      <p class="section-desc" style="margin-bottom:12px;">Edit and delete details across the application.</p>
-      <div class="table-card">
-        <table>
-          <thead><tr><th>Data Section</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr><td class="model-cell">Shipment Info</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-            <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;" onclick="window.openJSONEditor('Price List', PRICING)">Edit Data</button></td></tr>
-            <tr><td class="model-cell">Campaign Discount</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-            <tr><td class="model-cell">Showroom Stock</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </section>
 
   <!-- Editor Modal -->
@@ -522,8 +497,8 @@
   });
 
   onAuthStateChanged(auth, (user) => {
-    const adminTabBtn = document.getElementById('adminTabBtn');
     const loginBtn = document.getElementById('loginBtn');
+    const editBtns = document.querySelectorAll('.edit-btn');
     
     if (user) {
       loginBtn.textContent = "Logout";
@@ -534,18 +509,16 @@
       else if (email === "mohozafrath@gmail.com") role = "Main Admin";
       
       if (role !== "Guest") {
-        adminTabBtn.style.display = "inline-block";
-        document.getElementById("adminRoleDisplay").innerHTML = `<span class="variant-tag" style="background:var(--amber-soft); color:var(--amber);">${role}</span>`;
-        document.getElementById("adminEmailDisplay").textContent = email;
+        window.isAdmin = true;
+        editBtns.forEach(btn => btn.style.display = "inline-block");
       } else {
-        adminTabBtn.style.display = "none";
+        window.isAdmin = false;
+        editBtns.forEach(btn => btn.style.display = "none");
       }
     } else {
+      window.isAdmin = false;
       loginBtn.textContent = "Admin Login";
-      adminTabBtn.style.display = "none";
-      if (adminTabBtn.classList.contains('active')) {
-        document.querySelector('[data-tab="shipment"]').click();
-      }
+      editBtns.forEach(btn => btn.style.display = "none");
     }
   });
 </script>
