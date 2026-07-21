@@ -39,7 +39,16 @@
     --amber-soft:rgba(255,159,67,0.1);
     --red-soft:rgba(255,92,122,0.1);
   }
-  body.light-mode .tab-btn.active{ color:#FFFFFF; background:#0A0E1A; border-color:#0A0E1A; }
+  
+  /* Fix header in light mode to stay dark with white text */
+  body.light-mode header.top {
+    background: #050505;
+    --text: #FFFFFF;
+    --text-muted: #8791A8;
+  }
+  body.light-mode header.top .tab-btn { color: #8791A8; }
+  body.light-mode header.top .tab-btn:hover { color: #FFFFFF; background: rgba(255,255,255,0.1); }
+  body.light-mode header.top .tab-btn.active { color: #050505; background: #FFFFFF; border-color: #FFFFFF; }
   
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -466,6 +475,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDKvR8LZlItjtGcieqGBgURPnPkw4iEOwI",
@@ -481,6 +491,11 @@
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  // Expose to global scope so our render functions can access them
+  window.db = db;
+  window.auth = auth;
 
   // Ensure login session stays on the device until logout
   setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
