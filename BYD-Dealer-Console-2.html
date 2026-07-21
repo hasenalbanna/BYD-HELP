@@ -191,7 +191,7 @@
   /* ---------- tables (pricing / discount) ---------- */
   .table-card{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-    overflow-x:auto; overflow-y:hidden;
+    overflow:auto; max-height: 65vh;
   }
   table{ width:100%; border-collapse:collapse; font-size:13.5px; }
   thead th{
@@ -422,18 +422,20 @@
       </table>
     </div>
 
-    <h3 class="sub-title">Main Admin Editor</h3>
-    <p class="section-desc" style="margin-bottom:12px;">Edit and delete details across the application.</p>
-    <div class="table-card">
-      <table>
-        <thead><tr><th>Data Section</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr><td class="model-cell">Shipment Info</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-          <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-          <tr><td class="model-cell">Campaign Discount</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-          <tr><td class="model-cell">Showroom Stock</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-        </tbody>
-      </table>
+    <div id="mainAdminEditorSection">
+      <h3 class="sub-title">Main Admin Editor</h3>
+      <p class="section-desc" style="margin-bottom:12px;">Edit and delete details across the application.</p>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Data Section</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td class="model-cell">Shipment Info</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+            <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+            <tr><td class="model-cell">Campaign Discount</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+            <tr><td class="model-cell">Showroom Stock</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
