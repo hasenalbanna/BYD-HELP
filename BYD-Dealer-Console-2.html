@@ -327,7 +327,7 @@
   <section class="panel" id="panel-pricing">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h2 class="section-title" style="margin:0;">Price List</h2>
-      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Price List', PRICING)">Edit</button>
+      <button class="tab-btn edit-btn" id="editBtn-pricing" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.toggleEditMode('pricing', 'Price List')">Edit</button>
     </div>
     <p class="section-desc">Current pricing vs. new pricing without surcharge.</p>
     <div class="toolbar">
@@ -352,7 +352,7 @@
   <section class="panel" id="panel-discount">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h2 class="section-title" style="margin:0;">Campaign Discount</h2>
-      <button class="tab-btn edit-btn" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.openJSONEditor('Campaign Discount', DISCOUNT)">Edit</button>
+      <button class="tab-btn edit-btn" id="editBtn-discount" style="display:none; padding:4px 10px; font-size:11px; margin-bottom:4px;" onclick="window.toggleEditMode('discount', 'Campaign Discount')">Edit</button>
     </div>
     <div class="banner">
       <div class="dot"></div>
@@ -763,18 +763,37 @@ function renderPricing(filter){
   const f = (filter||'').toLowerCase();
   body.innerHTML = '';
   let count = 0;
-  PRICING.forEach(row => {
+  const isEditing = window.editingSections['pricing'];
+  
+  PRICING.forEach((row, idx) => {
     const [model, variant, cur, neu] = row;
     if(f && !model.toLowerCase().includes(f) && !variant.toLowerCase().includes(f)) return;
     count++;
-    const changed = cur !== neu;
-    body.innerHTML += `<tr>
-      <td class="model-cell">${model}</td>
-      <td><span class="variant-tag">${variant}</span></td>
-      <td class="num">${fmt(cur)}</td>
-      <td class="num ${changed ? 'price-new' : 'price-flat'}">${fmt(neu)}</td>
-    </tr>`;
+    
+    if (isEditing) {
+      body.innerHTML += `<tr>
+        <td><input type="text" value="${model}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="text" value="${variant}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="number" value="${cur}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="number" value="${neu}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td style="text-align:center;"><button onclick="window.deleteRow('pricing', ${idx})" style="background:none; border:none; color:red; cursor:pointer; font-size:14px;">🗑️</button></td>
+      </tr>`;
+    } else {
+      const changed = cur !== neu;
+      body.innerHTML += `<tr>
+        <td class="model-cell">${model}</td>
+        <td><span class="variant-tag">${variant}</span></td>
+        <td class="num">${fmt(cur)}</td>
+        <td class="num ${changed ? 'price-new' : 'price-flat'}">${fmt(neu)}</td>
+        ${window.isAdmin ? '<td style="display:none;"></td>' : ''}
+      </tr>`;
+    }
   });
+
+  if (isEditing) {
+    body.innerHTML += `<tr><td colspan="5" style="text-align:center;"><button class="tab-btn" onclick="window.addRow('pricing')" style="padding:4px 10px;">+ Add New Row</button></td></tr>`;
+  }
+  
   document.getElementById('pricingCount').textContent = `${count} of ${PRICING.length}`;
   document.getElementById('pricingNoResults').style.display = count ? 'none' : 'block';
 }
@@ -786,18 +805,38 @@ function renderDiscount(filter){
   const f = (filter||'').toLowerCase();
   body.innerHTML = '';
   let count = 0;
-  DISCOUNT.forEach(row => {
+  const isEditing = window.editingSections['discount'];
+  
+  DISCOUNT.forEach((row, idx) => {
     const [model, variant, existing, discount, special] = row;
     if(f && !model.toLowerCase().includes(f) && !variant.toLowerCase().includes(f)) return;
     count++;
-    body.innerHTML += `<tr>
-      <td class="model-cell">${model}</td>
-      <td><span class="variant-tag">${variant}</span></td>
-      <td class="num price-old">${fmt(existing)}</td>
-      <td class="num discount-amt">(${fmt(discount)})</td>
-      <td class="num price-new">${fmt(special)}</td>
-    </tr>`;
+    
+    if (isEditing) {
+      body.innerHTML += `<tr>
+        <td><input type="text" value="${model}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="text" value="${variant}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="number" value="${existing}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="number" value="${discount}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td><input type="number" value="${special}" style="width:100%; padding:4px; font-size:12px; background:var(--surface-raise); color:var(--text); border:1px solid var(--border); border-radius:4px;"></td>
+        <td style="text-align:center;"><button onclick="window.deleteRow('discount', ${idx})" style="background:none; border:none; color:red; cursor:pointer; font-size:14px;">🗑️</button></td>
+      </tr>`;
+    } else {
+      body.innerHTML += `<tr>
+        <td class="model-cell">${model}</td>
+        <td><span class="variant-tag">${variant}</span></td>
+        <td class="num price-old">${fmt(existing)}</td>
+        <td class="num discount-amt">(${fmt(discount)})</td>
+        <td class="num price-new">${fmt(special)}</td>
+        ${window.isAdmin ? '<td style="display:none;"></td>' : ''}
+      </tr>`;
+    }
   });
+
+  if (isEditing) {
+    body.innerHTML += `<tr><td colspan="6" style="text-align:center;"><button class="tab-btn" onclick="window.addRow('discount')" style="padding:4px 10px;">+ Add New Row</button></td></tr>`;
+  }
+  
   document.getElementById('discountCount').textContent = `${count} of ${DISCOUNT.length}`;
   document.getElementById('discountNoResults').style.display = count ? 'none' : 'block';
 }
@@ -892,6 +931,88 @@ document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
 });
 
 document.getElementById('updatedDate').textContent = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+
+window.editingSections = {};
+
+window.deleteRow = (section, idx) => {
+  if (section === 'pricing') PRICING.splice(idx, 1);
+  if (section === 'discount') DISCOUNT.splice(idx, 1);
+  if (section === 'pricing') renderPricing(document.getElementById('pricingSearch').value);
+  if (section === 'discount') renderDiscount(document.getElementById('discountSearch').value);
+};
+
+window.addRow = (section) => {
+  if (section === 'pricing') PRICING.push(["New Model", "Variant", 0, 0]);
+  if (section === 'discount') DISCOUNT.push(["New Model", "Variant", 0, 0, 0]);
+  if (section === 'pricing') renderPricing(document.getElementById('pricingSearch').value);
+  if (section === 'discount') renderDiscount(document.getElementById('discountSearch').value);
+};
+
+window.toggleEditMode = async (section, dataKey) => {
+  const isEditing = window.editingSections[section];
+  const btn = document.getElementById(`editBtn-${section}`);
+
+  if (!isEditing) {
+    // ENTER EDIT MODE
+    window.editingSections[section] = true;
+    btn.textContent = "Save Changes";
+    btn.style.background = "var(--teal)";
+    btn.style.color = "#000";
+    if (section === 'pricing') renderPricing(document.getElementById('pricingSearch').value);
+    if (section === 'discount') renderDiscount(document.getElementById('discountSearch').value);
+  } else {
+    // SAVE CHANGES
+    btn.textContent = "Saving...";
+    try {
+      let newData = [];
+      if (section === 'pricing') {
+        const rows = document.querySelectorAll('#pricingBody tr');
+        rows.forEach(tr => {
+          const inputs = tr.querySelectorAll('input');
+          if (inputs.length === 4) {
+            newData.push([
+              inputs[0].value,
+              inputs[1].value,
+              parseFloat(inputs[2].value) || 0,
+              parseFloat(inputs[3].value) || 0
+            ]);
+          }
+        });
+        PRICING = newData;
+      } else if (section === 'discount') {
+        const rows = document.querySelectorAll('#discountBody tr');
+        rows.forEach(tr => {
+          const inputs = tr.querySelectorAll('input');
+          if (inputs.length === 5) {
+            newData.push([
+              inputs[0].value,
+              inputs[1].value,
+              parseFloat(inputs[2].value) || 0,
+              parseFloat(inputs[3].value) || 0,
+              parseFloat(inputs[4].value) || 0
+            ]);
+          }
+        });
+        DISCOUNT = newData;
+      }
+
+      const { setDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await setDoc(doc(window.db, "app_data", dataKey), { value: newData });
+      
+      window.editingSections[section] = false;
+      btn.textContent = "Edit";
+      btn.style.background = "";
+      btn.style.color = "";
+      
+      if (section === 'pricing') renderPricing(document.getElementById('pricingSearch').value);
+      if (section === 'discount') renderDiscount(document.getElementById('discountSearch').value);
+      
+    } catch(e) {
+      alert("Save Error: " + e.message);
+      btn.textContent = "Save Changes";
+    }
+  }
+};
 
 let currentEditingKey = null;
 
