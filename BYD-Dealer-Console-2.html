@@ -25,6 +25,22 @@
     --red-soft:rgba(255,92,122,0.13);
     --radius:14px;
   }
+  
+  body.light-mode {
+    --bg:#F4F6F8;
+    --surface:#FFFFFF;
+    --surface-alt:#E9EDF2;
+    --surface-raise:#DDE3EB;
+    --border:rgba(0,0,0,0.12);
+    --text:#0A0E1A;
+    --text-muted:#5A6475;
+    --accent-soft:rgba(61,139,255,0.1);
+    --teal-soft:rgba(0,224,198,0.1);
+    --amber-soft:rgba(255,159,67,0.1);
+    --red-soft:rgba(255,92,122,0.1);
+  }
+  body.light-mode .tab-btn.active{ color:#FFFFFF; background:#0A0E1A; border-color:#0A0E1A; }
+  
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
@@ -271,7 +287,8 @@
     <button class="tab-btn" data-tab="showrooms">Showroom Stock</button>
     <button class="tab-btn" data-tab="service">Service Centres</button>
     <button class="tab-btn" data-tab="admin" id="adminTabBtn" style="color:var(--amber); display:none;">Admin Panel</button>
-    <button class="tab-btn" id="loginBtn" style="margin-left:auto; border:1px solid var(--accent); color:var(--accent);">Admin Login</button>
+    <button class="tab-btn" id="themeToggleBtn" style="margin-left:auto; background:#000; color:#fff; border:1px solid #333;">Light Mode</button>
+    <button class="tab-btn" id="loginBtn" style="margin-left:8px; border:1px solid var(--accent); color:var(--accent);">Admin Login</button>
   </nav>
 </header>
 
@@ -439,13 +456,16 @@
     </div>
   </section>
 
-  <footer>BYD HELP · internal use only</footer>
+  <footer>
+    <div>BYD HELP · internal use only</div>
+    <div style="margin-top:8px; color:var(--text); font-weight:600;">Disclaimer: This website is only for testing purposes. Data is not 100% exact or correct.</div>
+  </footer>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDKvR8LZlItjtGcieqGBgURPnPkw4iEOwI",
@@ -461,6 +481,9 @@
   const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
+
+  // Ensure login session stays on the device until logout
+  setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
 
   document.getElementById('loginBtn').addEventListener('click', () => {
     if (auth.currentUser) {
@@ -851,6 +874,18 @@ document.getElementById('discountSearch').addEventListener('input', e => renderD
 document.getElementById('showroomSearch').addEventListener('input', e => renderShowrooms(e.target.value));
 
 /* ===================== INIT ===================== */
+
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light-mode');
+  document.getElementById('themeToggleBtn').textContent = 'Dark Mode';
+}
+
+document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  e.target.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+});
 
 document.getElementById('updatedDate').textContent = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
 renderShipment('');
