@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BYD HELP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E1A;
+    --surface:#111729;
+    --surface-alt:#1A2138;
+    --surface-raise:#212A45;
+    --border:rgba(255,255,255,0.08);
+    --text:#E7ECF5;
+    --text-muted:#8791A8;
+    --accent:#3D8BFF;
+    --accent-soft:rgba(61,139,255,0.14);
+    --teal:#00E0C6;
+    --teal-soft:rgba(0,224,198,0.13);
+    --amber:#FF9F43;
+    --amber-soft:rgba(255,159,67,0.14);
+    --red:#FF5C7A;
+    --red-soft:rgba(255,92,122,0.13);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(61,139,255,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 0%, rgba(0,224,198,0.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 20px 80px; }
+
+  /* ---------- header ---------- */
+  header.top{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,14,26,0.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+  .top-inner{
+    max-width:1180px; margin:0 auto; padding:16px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand .mark{
+    width:34px; height:34px; border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),var(--teal));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; color:#061018; font-size:15px;
+    flex:none;
+  }
+  .brand h1{
+    font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; margin:0;
+    letter-spacing:0.2px;
+  }
+  .brand .sub{ font-size:11.5px; color:var(--text-muted); margin-top:1px; }
+  .updated{ font-size:11.5px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; }
+
+  nav.tabs{
+    display:flex; gap:6px; overflow-x:auto; padding:0 20px 14px;
+    max-width:1180px; margin:0 auto;
+    scrollbar-width:none;
+  }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  .tab-btn{
+    flex:none;
+    font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600;
+    color:var(--text-muted); background:transparent; border:1px solid transparent;
+    padding:8px 14px; border-radius:999px; cursor:pointer;
+    transition:background .18s ease, color .18s ease, border-color .18s ease;
+    white-space:nowrap;
+  }
+  .tab-btn:hover{ color:var(--text); background:var(--surface-alt); }
+  .tab-btn.active{ color:#06111f; background:var(--text); border-color:var(--text); }
+
+  /* ---------- search ---------- */
+  .toolbar{
+    display:flex; align-items:center; gap:10px; margin:24px 0 18px;
+  }
+  .search{
+    flex:1; position:relative;
+  }
+  .search input{
+    width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
+    padding:11px 14px 11px 38px; border-radius:11px; font-size:13.5px; font-family:'Inter',sans-serif;
+    outline:none; transition:border-color .15s ease, background .15s ease;
+  }
+  .search input:focus{ border-color:var(--accent); background:var(--surface-alt); }
+  .search svg{ position:absolute; left:13px; top:50%; transform:translateY(-50%); opacity:0.5; }
+  .count-pill{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text-muted);
+    background:var(--surface); border:1px solid var(--border); padding:8px 12px; border-radius:10px;
+    white-space:nowrap;
+  }
+
+  /* ---------- sections ---------- */
+  section.panel{ display:none; animation:fadeIn .25s ease; }
+  section.panel.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  h2.section-title{
+    font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600; margin:0 0 4px;
+  }
+  h3.sub-title{
+    font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:600; margin:0 0 8px;
+  }
+  p.section-desc{ color:var(--text-muted); font-size:13px; margin:0 0 20px; line-height:1.5; }
+
+  .bar-chart{ display:flex; flex-direction:column; gap:14px; }
+  .bar-row{ display:flex; align-items:center; gap:12px; }
+  .bar-label{ width:88px; flex:none; font-size:12.5px; color:var(--text-muted); text-align:right; }
+  .bar-track{ flex:1; display:flex; gap:3px; align-items:center; height:20px; }
+  .bar-fill{ height:20px; border-radius:5px; }
+  .bar-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+  .bar-tag{
+    font-size:10.5px; font-weight:600; font-family:'JetBrains Mono',monospace;
+    padding:2px 8px; border-radius:999px;
+  }
+  .bar-tag.colombo{ background:var(--accent-soft); color:var(--accent); }
+  .bar-tag.wattala{ background:var(--teal-soft); color:var(--teal); }
+
+  .banner{
+    display:flex; align-items:flex-start; gap:12px;
+    background:var(--amber-soft); border:1px solid rgba(255,159,67,0.35);
+    padding:14px 16px; border-radius:12px; margin-bottom:22px;
+  }
+  .banner .dot{ width:8px; height:8px; border-radius:50%; background:var(--amber); margin-top:6px; flex:none; }
+  .banner strong{ color:#FFC48A; font-family:'Space Grotesk',sans-serif; font-weight:600; }
+  .banner p{ margin:2px 0 0; font-size:13px; color:#E9D3B8; line-height:1.5; }
+
+  /* ---------- model groups (shipment) ---------- */
+  .model-group{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:14px; overflow:hidden;
+  }
+  .model-head{
+    display:flex; align-items:center; justify-content:between; gap:10px;
+    padding:14px 16px; cursor:pointer; user-select:none;
+    background:var(--surface-alt);
+  }
+  .model-head h3{
+    font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:600; margin:0; flex:1;
+    display:flex; align-items:center; gap:9px;
+  }
+  .model-head .chev{ transition:transform .2s ease; opacity:0.6; flex:none; }
+  .model-group.open .chev{ transform:rotate(90deg); }
+  .model-body{ display:none; padding:6px 16px 14px; }
+  .model-group.open .model-body{ display:block; }
+
+  .trim-block{ margin-top:10px; }
+  .trim-block:first-child{ margin-top:4px; }
+  .trim-label{
+    font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted);
+    margin:0 0 8px; font-weight:600;
+  }
+  .ext-label{
+    font-size:12px; color:var(--text-muted); margin:10px 0 6px 0; padding-left:2px;
+    font-weight:500;
+  }
+  .color-row{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:9px;
+    transition:background .12s ease;
+  }
+  .color-row:hover{ background:var(--surface-alt); }
+  .swatch{
+    width:16px; height:16px; border-radius:50%; flex:none;
+    border:1px solid rgba(255,255,255,0.18);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.25);
+  }
+  .color-name{ font-size:13px; flex:1; }
+  .status{
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:500;
+    padding:3px 9px; border-radius:999px; white-space:nowrap;
+  }
+  .status.stock{ background:var(--teal-soft); color:var(--teal); }
+  .status.pending{ background:var(--amber-soft); color:var(--amber); }
+  .status.na{ background:var(--red-soft); color:var(--red); }
+  .status.eta{ background:var(--accent-soft); color:var(--accent); }
+
+  /* ---------- tables (pricing / discount) ---------- */
+  .table-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    text-align:left; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:11.5px;
+    text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted);
+    padding:12px 16px; border-bottom:1px solid var(--border); background:var(--surface-alt);
+  }
+  tbody td{ padding:12px 16px; border-bottom:1px solid var(--border); }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr{ transition:background .12s ease; }
+  tbody tr:hover{ background:var(--surface-alt); }
+  td.num, th.num{ text-align:right; font-family:'JetBrains Mono',monospace; }
+  td.model-cell{ font-weight:600; }
+  .variant-tag{
+    font-size:11px; color:var(--text-muted); background:var(--surface-raise);
+    padding:2px 8px; border-radius:6px; display:inline-block;
+  }
+  .price-old{ color:var(--text-muted); text-decoration:line-through; font-size:12.5px; }
+  .price-new{ color:var(--teal); font-weight:600; }
+  .discount-amt{ color:var(--red); }
+  .price-flat{ color:var(--text-muted); }
+  .no-results{ padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px; display:none; }
+
+  /* ---------- showroom cards ---------- */
+  .showroom-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;
+  }
+  .showroom-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px;
+  }
+  .showroom-card h3{
+    font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; margin:0 0 12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .showroom-card h3 .pin{ color:var(--accent); flex:none; }
+  .sr-row{ display:flex; align-items:center; gap:9px; padding:6px 0; border-top:1px solid var(--border); }
+  .sr-row:first-of-type{ border-top:none; }
+  .sr-model{ font-size:12.5px; font-weight:600; min-width:78px; }
+  .sr-color{ font-size:12.5px; color:var(--text-muted); flex:1; }
+
+  footer{
+    text-align:center; color:var(--text-muted); font-size:11.5px; margin-top:40px; padding-top:20px;
+    border-top:1px solid var(--border);
+  }
+
+  @media (max-width:640px){
+    .top-inner{ padding:14px 16px; }
+    nav.tabs{ padding:0 16px 12px; }
+    .wrap{ padding:0 16px 60px; }
+    table{ font-size:12.5px; }
+    thead th, tbody td{ padding:10px 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <img class="mark" src="LOGO.jpg" alt="BYD HELP Logo" style="object-fit:cover; background:none;">
+      <div>
+        <h1>BYD HELP</h1>
+        <div class="sub">Sri Lanka network · internal reference</div>
+      </div>
+    </div>
+    <div class="updated" id="updatedDate">—</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="shipment">Shipment Info</button>
+    <button class="tab-btn" data-tab="pricing">Price List</button>
+    <button class="tab-btn" data-tab="discount">Campaign Discount</button>
+    <button class="tab-btn" data-tab="showrooms">Showroom Stock</button>
+    <button class="tab-btn" data-tab="service">Service Centres</button>
+    <button class="tab-btn" data-tab="admin" style="color:var(--amber);">Admin Panel</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- SHIPMENT -->
+  <section class="panel active" id="panel-shipment">
+    <h2 class="section-title">Shipment Info</h2>
+    <p class="section-desc">Colour availability by model and trim, with next shipment status.</p>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="shipmentSearch" placeholder="Search model or colour…">
+      </div>
+      <div class="count-pill" id="shipmentCount">—</div>
+    </div>
+    <div id="shipmentContainer"></div>
+    <div class="no-results" id="shipmentNoResults">No matching model or colour.</div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="panel" id="panel-pricing">
+    <h2 class="section-title">Price List</h2>
+    <p class="section-desc">Current pricing vs. new pricing without surcharge.</p>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="pricingSearch" placeholder="Search model…">
+      </div>
+      <div class="count-pill" id="pricingCount">—</div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr>
+          <th>Model</th><th>Variant</th><th class="num">Current (LKR)</th><th class="num">New — no surcharge (LKR)</th>
+        </tr></thead>
+        <tbody id="pricingBody"></tbody>
+      </table>
+      <div class="no-results" id="pricingNoResults">No matching model.</div>
+    </div>
+  </section>
+
+  <!-- DISCOUNT -->
+  <section class="panel" id="panel-discount">
+    <h2 class="section-title">Campaign Discount</h2>
+    <div class="banner">
+      <div class="dot"></div>
+      <div><strong>Garu Saru Campaign only.</strong>
+        <p>Every discount and special price on this page applies exclusively under the Garu Saru Campaign — not standard pricing.</p>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="discountSearch" placeholder="Search model…">
+      </div>
+      <div class="count-pill" id="discountCount">—</div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr>
+          <th>Model</th><th>Variant</th><th class="num">Existing Price</th><th class="num">Max Discount</th><th class="num">Special Price</th>
+        </tr></thead>
+        <tbody id="discountBody"></tbody>
+      </table>
+      <div class="no-results" id="discountNoResults">No matching model.</div>
+    </div>
+    <p class="section-desc" style="margin-top:10px;">Existing Price now reflects the new price without surcharge from the Price List. Denza B5 and Debza B8 aren't on that list, so their existing price is unchanged.</p>
+  </section>
+
+  <!-- SHOWROOMS -->
+  <section class="panel" id="panel-showrooms">
+    <h2 class="section-title">Showroom Stock</h2>
+    <p class="section-desc">Models and colours currently on display at each showroom.</p>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="showroomSearch" placeholder="Search showroom, model or colour…">
+      </div>
+      <div class="count-pill" id="showroomCount">—</div>
+    </div>
+    <div class="showroom-grid" id="showroomGrid"></div>
+    <div class="no-results" id="showroomNoResults">No matching showroom, model or colour.</div>
+  </section>
+
+  <!-- SERVICE CENTRES -->
+  <section class="panel" id="panel-service">
+    <h2 class="section-title">Service Centres</h2>
+    <p class="section-desc">Sealion (SL) variant drivetrains, service routing, and which service centre carries each model. Wattala and Colombo are service centres, not showrooms.</p>
+
+    <h3 class="sub-title">Service Schedule</h3>
+    <p class="section-desc" style="margin-bottom:12px;">Routing is by odd/even service number, not by a fixed location — <strong style="color:var(--text);">SM</strong> and <strong style="color:var(--text);">LG</strong> are service centre codes.</p>
+    <div class="table-card" style="margin-bottom:26px;">
+      <table>
+        <thead><tr><th>Service Number</th><th>Routed To</th></tr></thead>
+        <tbody>
+          <tr><td>Odd — 1st, 3rd, 5th, 7th…</td><td><span class="variant-tag">SM</span></td></tr>
+          <tr><td>Even — 2nd, 4th, 6th, 8th…</td><td><span class="variant-tag">LG</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Sealion 6 Variants</h3>
+    <p class="section-desc" style="margin-bottom:12px;">SL = Sealion.</p>
+    <div class="table-card" style="margin-bottom:26px;">
+      <table>
+        <thead><tr><th>Variant</th><th>Drivetrain</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="model-cell">Superior</td><td>FWD (Four-Wheel Drive)</td><td class="price-flat">Basic variant</td></tr>
+          <tr><td class="model-cell">Premium</td><td>AWD (All-Wheel Drive)</td><td class="price-flat">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Service Centre Distribution — Wattala &amp; Colombo</h3>
+    <div class="table-card" style="margin-bottom:26px;">
+      <table>
+        <thead><tr><th>Model</th><th>Wattala</th><th>Colombo</th></tr></thead>
+        <tbody id="serviceDistBody"></tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Model Distribution by Service Centre</h3>
+    <div class="bar-chart" id="serviceBarChart"></div>
+  </section>
+
+  <!-- ADMIN PANEL -->
+  <section class="panel" id="panel-admin">
+    <h2 class="section-title">Admin Panel</h2>
+    <p class="section-desc">Manage app details and view access logs. Access levels are restricted by email.</p>
+    
+    <div class="banner" style="background:var(--accent-soft); border-color:var(--accent); margin-bottom:20px;">
+      <div class="dot" style="background:var(--accent);"></div>
+      <div><strong style="color:var(--accent);">Authentication Pending</strong>
+        <p style="color:var(--text); margin-top:4px;">Firebase Auth will be configured to assign <strong>Main Admin</strong> and <strong>Super Admin</strong> roles based on emails provided.</p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Super Admin Controls</h3>
+    <p class="section-desc" style="margin-bottom:12px;">Monitor app visitors and manage all system data.</p>
+    <div class="table-card" style="margin-bottom:26px;">
+      <table>
+        <thead><tr><th>User Email</th><th>Visit Date & Time</th><th>Role</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>visitor@example.com</td><td>2026-07-21 14:30</td><td><span class="variant-tag">Guest</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Revoke</button></td></tr>
+          <tr><td>super@bydhelp.com</td><td>2026-07-21 14:15</td><td><span class="variant-tag" style="background:var(--amber-soft); color:var(--amber);">Super Admin</span></td><td>-</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-title">Main Admin Editor</h3>
+    <p class="section-desc" style="margin-bottom:12px;">Edit and delete details across the application.</p>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Data Section</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          <tr><td class="model-cell">Shipment Info</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+          <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+          <tr><td class="model-cell">Campaign Discount</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+          <tr><td class="model-cell">Showroom Stock</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>BYD HELP · internal use only</footer>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDKvR8LZlItjtGcieqGBgURPnPkw4iEOwI",
+    authDomain: "byd-help.firebaseapp.com",
+    projectId: "byd-help",
+    storageBucket: "byd-help.firebasestorage.app",
+    messagingSenderId: "1060379421107",
+    appId: "1:1060379421107:web:46c809a74b03394e76c3c6",
+    measurementId: "G-Y4461HQF4S"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+<script>
+/* ===================== DATA ===================== */
+
+const SHIPMENT = [
+  { model:"ATTO 1", trims:[
+    { trim:"Dynamic", colors:[
+      {c:"Apricity White", s:"pending"}, {c:"Arctic Blue", s:"pending"},
+      {c:"Cosmos Black", s:"pending"}, {c:"Sprout Green", s:"pending"}
+    ]},
+    { trim:"Premium", colors:[
+      {c:"Apricity White", s:"eta", label:"Early Aug"}, {c:"Arctic Blue", s:"pending"},
+      {c:"Cosmos Black", s:"pending"}, {c:"Sprout Green", s:"pending"}
+    ]}
+  ]},
+  { model:"ATTO 2", trims:[
+    { trim:"Premium", groups:[
+      { ext:"Breeze Green", colors:[ {c:"Breeze Green", s:"na"} ] },
+      { ext:"Cosmos Black (exterior)", colors:[
+        {c:"Black interior", s:"pending"}, {c:"Black + Beige interior", s:"pending"}, {c:"Harbour Grey interior", s:"pending"}
+      ]},
+      { ext:"Ski White (exterior)", colors:[
+        {c:"Black interior", s:"pending"}, {c:"Black + Beige interior", s:"na"}
+      ]},
+      { ext:"Midnight Blue (exterior)", colors:[
+        {c:"Black interior", s:"pending"}, {c:"Black + Beige interior", s:"pending"}, {c:"Bubble Green interior", s:"stock"}
+      ]}
+    ]}
+  ]},
+  { model:"BYD SHARK", trims:[
+    { trim:"Premium", colors:[
+      {c:"Arctic White", s:"stock"}, {c:"Atlantis Grey", s:"na"},
+      {c:"Cosmos Black", s:"stock"}, {c:"Outback Orange", s:"eta", label:"Early Aug"}
+    ]}
+  ]},
+  { model:"DOLPHIN", trims:[
+    { trim:"Dynamic 70 — Standard", colors:[
+      {c:"Atlantis Grey", s:"pending"}, {c:"Harbour Grey", s:"stock"}, {c:"Ski White", s:"stock"}
+    ]}
+  ]},
+  { model:"SEAL", trims:[
+    { trim:"Comfort", colors:[
+      {c:"Atlantis Grey", s:"stock"}, {c:"Aurora White", s:"na"},
+      {c:"Cosmos Black", s:"stock"}, {c:"Shark Grey", s:"na"}
+    ]}
+  ]},
+  { model:"SEALION 5", trims:[
+    { trim:"Dynamic", colors:[
+      {c:"Atlantis Grey", s:"stock"}, {c:"Aurora White", s:"stock"}, {c:"Cosmos Black", s:"stock"},
+      {c:"Harbour Grey", s:"stock"}, {c:"Misty Blue", s:"na"}
+    ]},
+    { trim:"Premium", colors:[
+      {c:"Atlantis Grey", s:"stock"}, {c:"Aurora White", s:"na"}, {c:"Cosmos Black", s:"stock"}, {c:"Harbour Grey", s:"na"}
+    ]}
+  ]},
+  { model:"SEALION 6", trims:[
+    { trim:"AWD", groups:[
+      { ext:"Arctic White (exterior)", colors:[ {c:"Black & Brown interior", s:"stock"}, {c:"Blue & Grey interior", s:"stock"} ]},
+      { ext:"Delan Black (exterior)", colors:[ {c:"Black & Brown interior", s:"na"}, {c:"Blue & Grey interior", s:"na"} ]},
+      { ext:"Harbour Grey (exterior)", colors:[ {c:"Black & Brown interior", s:"stock"}, {c:"Blue & Grey interior", s:"stock"} ]},
+      { ext:"Stone Grey (exterior)", colors:[ {c:"Black & Brown interior", s:"stock"}, {c:"Blue & Grey interior", s:"stock"} ]}
+    ]},
+    { trim:"Superior", colors:[
+      {c:"Arctic White", s:"pending"}, {c:"Delan Black", s:"pending"}, {c:"Harbour Grey", s:"pending"}, {c:"Stone Grey", s:"pending"}
+    ]}
+  ]},
+  { model:"SEALION 8", trims:[
+    { trim:"Dynamic", colors:[ {c:"Arctic White", s:"stock"} ] }
+  ]}
+];
+
+const PRICING = [
+  ["Atto 1","Dynamic",8350000,8600000],
+  ["Atto 1","Premium",9210000,9500000],
+  ["Dolphin","Standard",11785000,11950000],
+  ["Atto 2","Premium",13500000,13500000],
+  ["Sealion 5","Dynamic",18000000,18000000],
+  ["Sealion 5","Premium",19200000,19200000],
+  ["Sealion 6","Superior",21700000,22500000],
+  ["Sealion 6","Premium",25300000,26100000],
+  ["Shark 6","Premium",26300000,26500000],
+  ["Sealion 8","Dynamic",29900000,30000000],
+  ["Sealion 8","Premium",34900000,35000000],
+];
+
+const DISCOUNT = [
+  ["Atto 1","Dynamic",8600000,100000,8500000],
+  ["Atto 1","Premium",9500000,100000,9400000],
+  ["Atto 2","Premium",13500000,338000,13162000],
+  ["Dolphin","Dynamic 70",11950000,110000,11840000],
+  ["Sealion 5","Dynamic",18000000,245000,17755000],
+  ["Sealion 5","Premium",19200000,261000,18939000],
+  ["Sealion 6","Superior",22500000,599000,21901000],
+  ["Sealion 6","Premium",26100000,699000,25401000],
+  ["Shark 6","Premium",26500000,849000,25651000],
+  ["Sealion 8","Dynamic",30000000,1000000,29000000],
+  ["Sealion 8","Premium",35000000,1166000,33834000],
+  ["Denza B5","Premium",49901000,1776000,48125000],
+  ["Debza B8","Dynamic",74901000,2760000,72141000],
+  ["Debza B8","Premium",79901000,2947000,76954000],
+];
+
+const SHOWROOMS = [
+  { name:"Colombo", items:[["Atto 1","Arctic Blue"],["Atto 2","Ski White"],["Dolphin","Ski White"],["Sealion 5","Cosmos Black"],["Sealion 6","Harbour Grey"]]},
+  { name:"Altair", items:[["Seal","Atlantis Grey"],["Sealion 6","Stone Grey"],["Sealion 8","Cosmos Black"],["Shark 6","Outback Orange"],["B5","Eclipse Black"],["B8","Nebula Silver"]]},
+  { name:"Moratuwa", items:[["Atto 1","Arctic Blue"],["Dolphin","Harbor Grey"],["Seal","Shark Grey"],["Sealion 5","Aurora White"],["Sealion 6","Harbor Grey"],["Sealion 8","Ridge Grey"]]},
+  { name:"Kurunegala", items:[["Atto 1","Sprout Green"],["Dolphin","Harbor Grey"],["Atto 3","Harbor Grey"],["Seal","Atlantis Grey"],["Sealion 5","Aurora White"],["Sealion 6","Harbor Grey"],["Shark 6","Arctic White"]]},
+  { name:"Kandy", items:[["Atto 1","Arctic Blue"],["Dolphin","Harbor Grey"],["Atto 3","Harbor Grey"],["Seal","Atlantis Grey"],["Sealion 5","Cosmos Black"],["Sealion 6","Harbor Grey"],["Sealion 8","Dark Aquamarine"],["Shark 6","Outback Orange"]]},
+  { name:"Galle", items:[["Atto 1","Arctic Blue"],["Dolphin","Harbor Grey"],["Sealion 5","Harbor Grey"],["Sealion 6","Harbor Grey"],["Sealion 8","Ridge Grey"],["Seal","Atlantis Grey"],["Shark 6","Arctic White"]]},
+  { name:"Ampara", items:[["Atto 1","Sprout Green"],["Atto 3","Harbor Grey"],["Sealion 5","Atlantis Grey"],["Sealion 6","Harbor Grey"],["Shark 6","Arctic White"]]},
+  { name:"Ratnapura", items:[["Atto 1","Sprout Green"],["Seal","Cosmos Black"],["Sealion 5","Harbor Grey"],["Sealion 6","Harbor Grey"],["Sealion 8","Cosmos Black"],["Shark 6","Arctic White"]]},
+  { name:"Jaffna", items:[["Atto 1","Arctic Blue"],["Sealion 5","Aurora White"],["Sealion 6","Stone Grey"]]},
+];
+
+const SERVICE_DIST = [
+  { model:"SL 5", wattala:true, colombo:false },
+  { model:"SL 6 (FWD)", wattala:true, colombo:true },
+  { model:"SL 6 AWD", wattala:false, colombo:true },
+  { model:"SL 8", wattala:false, colombo:true },
+  { model:"EVs", wattala:true, colombo:false },
+  { model:"PHEVs", wattala:false, colombo:true },
+  { model:"Shark 6", wattala:false, colombo:true },
+];
+
+/* ===================== HELPERS ===================== */
+
+function fmt(n){ return n.toLocaleString('en-US'); }
+
+function swatchColor(name){
+  const n = name.toLowerCase();
+  if(n.includes('white') || n.includes('apricity') || n.includes('breeze') && false) return '#F2F1EC';
+  if(n.includes('black') || n.includes('cosmos') || n.includes('delan') || n.includes('midnight') || n.includes('eclipse')) return '#1B1D22';
+  if(n.includes('blue') || n.includes('aquamarine')) return '#2E5FD9';
+  if(n.includes('teal') || n.includes('breeze')) return '#2E9E8A';
+  if(n.includes('green') || n.includes('sprout') || n.includes('bubble')) return '#5AA35A';
+  if(n.includes('orange') || n.includes('outback')) return '#D9772E';
+  if(n.includes('silver') || n.includes('nebula')) return '#C3C6CC';
+  if(n.includes('grey') || n.includes('gray')) return '#8A8F98';
+  if(n.includes('beige')) return '#D8C9B0';
+  if(n.includes('brown')) return '#6B4A34';
+  return '#7A8296';
+}
+
+function statusMeta(s, label){
+  const map = {
+    stock:{cls:'stock', text:'Stock Available'},
+    pending:{cls:'pending', text:'Oct — Planning Shipment'},
+    na:{cls:'na', text:'N/A'},
+    eta:{cls:'eta', text:label || 'ETA'}
+  };
+  return map[s] || map.na;
+}
+
+/* ===================== RENDER: SHIPMENT ===================== */
+
+function renderShipment(filter){
+  const container = document.getElementById('shipmentContainer');
+  container.innerHTML = '';
+  const f = (filter||'').toLowerCase();
+  let visibleGroups = 0, visibleColors = 0;
+
+  SHIPMENT.forEach((modelEntry, mi) => {
+    const modelMatches = modelEntry.model.toLowerCase().includes(f);
+    let trimHtml = '';
+    let modelHasMatch = false;
+
+    modelEntry.trims.forEach(trimEntry => {
+      let inner = '';
+      let trimHasMatch = false;
+
+      if(trimEntry.colors){
+        trimEntry.colors.forEach(item => {
+          const colorMatch = item.c.toLowerCase().includes(f);
+          if(!f || modelMatches || colorMatch){
+            trimHasMatch = true; visibleColors++;
+            const meta = statusMeta(item.s, item.label);
+            inner += `<div class="color-row">
+              <span class="swatch" style="background:${swatchColor(item.c)}"></span>
+              <span class="color-name">${item.c}</span>
+              <span class="status ${meta.cls}">${meta.text}</span>
+            </div>`;
+          }
+        });
+      } else if(trimEntry.groups){
+        trimEntry.groups.forEach(g => {
+          let groupInner = '';
+          let groupHasMatch = false;
+          g.colors.forEach(item => {
+            const colorMatch = (item.c + ' ' + g.ext).toLowerCase().includes(f);
+            if(!f || modelMatches || colorMatch){
+              groupHasMatch = true; visibleColors++;
+              const meta = statusMeta(item.s, item.label);
+              groupInner += `<div class="color-row">
+                <span class="swatch" style="background:${swatchColor(g.ext)}"></span>
+                <span class="color-name">${item.c}</span>
+                <span class="status ${meta.cls}">${meta.text}</span>
+              </div>`;
+            }
+          });
+          if(groupHasMatch){
+            trimHasMatch = true;
+            inner += `<div class="ext-label">${g.ext}</div>${groupInner}`;
+          }
+        });
+      }
+
+      if(trimHasMatch){
+        modelHasMatch = true;
+        trimHtml += `<div class="trim-block"><div class="trim-label">${trimEntry.trim}</div>${inner}</div>`;
+      }
+    });
+
+    if(modelHasMatch){
+      visibleGroups++;
+      const div = document.createElement('div');
+      div.className = 'model-group' + (mi < 2 ? ' open' : '');
+      div.innerHTML = `
+        <div class="model-head">
+          <h3>${modelEntry.model}</h3>
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="model-body">${trimHtml}</div>
+      `;
+      div.querySelector('.model-head').addEventListener('click', () => div.classList.toggle('open'));
+      container.appendChild(div);
+    }
+  });
+
+  document.getElementById('shipmentCount').textContent = `${visibleColors} colours`;
+  document.getElementById('shipmentNoResults').style.display = visibleGroups ? 'none' : 'block';
+}
+
+/* ===================== RENDER: PRICING ===================== */
+
+function renderPricing(filter){
+  const body = document.getElementById('pricingBody');
+  const f = (filter||'').toLowerCase();
+  body.innerHTML = '';
+  let count = 0;
+  PRICING.forEach(row => {
+    const [model, variant, cur, neu] = row;
+    if(f && !model.toLowerCase().includes(f) && !variant.toLowerCase().includes(f)) return;
+    count++;
+    const changed = cur !== neu;
+    body.innerHTML += `<tr>
+      <td class="model-cell">${model}</td>
+      <td><span class="variant-tag">${variant}</span></td>
+      <td class="num">${fmt(cur)}</td>
+      <td class="num ${changed ? 'price-new' : 'price-flat'}">${fmt(neu)}</td>
+    </tr>`;
+  });
+  document.getElementById('pricingCount').textContent = `${count} of ${PRICING.length}`;
+  document.getElementById('pricingNoResults').style.display = count ? 'none' : 'block';
+}
+
+/* ===================== RENDER: DISCOUNT ===================== */
+
+function renderDiscount(filter){
+  const body = document.getElementById('discountBody');
+  const f = (filter||'').toLowerCase();
+  body.innerHTML = '';
+  let count = 0;
+  DISCOUNT.forEach(row => {
+    const [model, variant, existing, discount, special] = row;
+    if(f && !model.toLowerCase().includes(f) && !variant.toLowerCase().includes(f)) return;
+    count++;
+    body.innerHTML += `<tr>
+      <td class="model-cell">${model}</td>
+      <td><span class="variant-tag">${variant}</span></td>
+      <td class="num price-old">${fmt(existing)}</td>
+      <td class="num discount-amt">(${fmt(discount)})</td>
+      <td class="num price-new">${fmt(special)}</td>
+    </tr>`;
+  });
+  document.getElementById('discountCount').textContent = `${count} of ${DISCOUNT.length}`;
+  document.getElementById('discountNoResults').style.display = count ? 'none' : 'block';
+}
+
+/* ===================== RENDER: SHOWROOMS ===================== */
+
+function renderShowrooms(filter){
+  const grid = document.getElementById('showroomGrid');
+  const f = (filter||'').toLowerCase();
+  grid.innerHTML = '';
+  let visibleCards = 0;
+
+  SHOWROOMS.forEach(sr => {
+    const nameMatch = sr.name.toLowerCase().includes(f);
+    const rows = sr.items.filter(([m,c]) => !f || nameMatch || m.toLowerCase().includes(f) || c.toLowerCase().includes(f));
+    if(!rows.length) return;
+    visibleCards++;
+    const rowsHtml = rows.map(([m,c]) => `
+      <div class="sr-row">
+        <span class="swatch" style="background:${swatchColor(c)}"></span>
+        <span class="sr-model">${m}</span>
+        <span class="sr-color">${c}</span>
+      </div>`).join('');
+    grid.innerHTML += `<div class="showroom-card">
+      <h3><span class="pin">●</span>${sr.name}</h3>
+      ${rowsHtml}
+    </div>`;
+  });
+
+  document.getElementById('showroomCount').textContent = `${visibleCards} of ${SHOWROOMS.length} showrooms`;
+  document.getElementById('showroomNoResults').style.display = visibleCards ? 'none' : 'block';
+}
+
+/* ===================== RENDER: SERVICE CENTRES ===================== */
+
+function renderServiceCentres(){
+  const body = document.getElementById('serviceDistBody');
+  body.innerHTML = SERVICE_DIST.map(r => `<tr>
+    <td class="model-cell">${r.model}</td>
+    <td>${r.wattala ? '<span class="status stock">✓</span>' : ''}</td>
+    <td>${r.colombo ? '<span class="status eta">✓</span>' : ''}</td>
+  </tr>`).join('');
+
+  const chart = document.getElementById('serviceBarChart');
+  // reverse order so the list reads top-to-bottom like the source (Shark 6 first)
+  const ordered = [...SERVICE_DIST].reverse();
+  chart.innerHTML = ordered.map(r => {
+    const tags = [];
+    if(r.colombo) tags.push('<span class="bar-tag colombo">Colombo</span>');
+    if(r.wattala) tags.push('<span class="bar-tag wattala">Wattala</span>');
+    const fillColor = r.colombo && r.wattala
+      ? `linear-gradient(90deg, var(--accent), var(--accent) 65%, var(--teal))`
+      : (r.colombo ? 'var(--accent)' : 'var(--teal)');
+    return `<div class="bar-row">
+      <div class="bar-label">${r.model}</div>
+      <div class="bar-track"><div class="bar-fill" style="flex:1; background:${fillColor}"></div></div>
+      <div class="bar-tags">${tags.join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ===================== TABS ===================== */
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ===================== SEARCH BINDINGS ===================== */
+
+document.getElementById('shipmentSearch').addEventListener('input', e => renderShipment(e.target.value));
+document.getElementById('pricingSearch').addEventListener('input', e => renderPricing(e.target.value));
+document.getElementById('discountSearch').addEventListener('input', e => renderDiscount(e.target.value));
+document.getElementById('showroomSearch').addEventListener('input', e => renderShowrooms(e.target.value));
+
+/* ===================== INIT ===================== */
+
+document.getElementById('updatedDate').textContent = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+renderShipment('');
+renderPricing('');
+renderDiscount('');
+renderShowrooms('');
+renderServiceCentres();
+</script>
+</body>
+</html>
