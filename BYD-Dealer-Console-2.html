@@ -456,7 +456,7 @@
           <thead><tr><th>Data Section</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             <tr><td class="model-cell">Shipment Info</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
-            <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
+            <tr><td class="model-cell">Price List</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;" onclick="window.openJSONEditor('Price List', PRICING)">Edit Data</button></td></tr>
             <tr><td class="model-cell">Campaign Discount</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
             <tr><td class="model-cell">Showroom Stock</td><td><span class="status stock">Live</span></td><td><button class="tab-btn" style="padding:4px 10px; font-size:11px;">Edit Data</button></td></tr>
           </tbody>
@@ -464,6 +464,19 @@
       </div>
     </div>
   </section>
+
+  <!-- Editor Modal -->
+  <div id="jsonModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--surface); padding:20px; border-radius:12px; width:100%; max-width:600px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+      <h3 id="jsonModalTitle" style="margin-top:0; font-family:'Space Grotesk',sans-serif;">Edit Data</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Edit the data below. Ensure you keep the formatting correct (JSON format) so it loads properly.</p>
+      <textarea id="jsonModalText" style="width:100%; height:300px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:15px; outline:none; resize:vertical;"></textarea>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button class="tab-btn" onclick="document.getElementById('jsonModal').style.display='none'">Cancel</button>
+        <button class="tab-btn active" id="jsonModalSave">Save to Database</button>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <div>BYD HELP · internal use only</div>
@@ -475,7 +488,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, getDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDKvR8LZlItjtGcieqGBgURPnPkw4iEOwI",
@@ -606,7 +619,7 @@ const SHIPMENT = [
   ]}
 ];
 
-const PRICING = [
+let PRICING = [
   ["Atto 1","Dynamic",8350000,8600000],
   ["Atto 1","Premium",9210000,9500000],
   ["Dolphin","Standard",11785000,11950000],
@@ -903,11 +916,51 @@ document.getElementById('themeToggleBtn').addEventListener('click', (e) => {
 });
 
 document.getElementById('updatedDate').textContent = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-renderShipment('');
-renderPricing('');
-renderDiscount('');
-renderShowrooms('');
-renderServiceCentres();
+
+let currentEditingKey = null;
+
+window.openJSONEditor = async (key, fallbackData) => {
+  currentEditingKey = key;
+  document.getElementById('jsonModalTitle').textContent = `Edit ${key}`;
+  let dataToEdit = fallbackData;
+  try {
+    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const snap = await getDoc(doc(window.db, "app_data", key));
+    if (snap.exists()) dataToEdit = snap.data().value;
+  } catch(e) { console.error(e); }
+  
+  document.getElementById('jsonModalText').value = JSON.stringify(dataToEdit, null, 2);
+  document.getElementById('jsonModal').style.display = 'flex';
+};
+
+document.getElementById('jsonModalSave').addEventListener('click', async () => {
+  try {
+    const newVal = JSON.parse(document.getElementById('jsonModalText').value);
+    const { setDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    await setDoc(doc(window.db, "app_data", currentEditingKey), { value: newVal });
+    document.getElementById('jsonModal').style.display = 'none';
+    alert('Saved successfully! Refreshing data...');
+    window.location.reload();
+  } catch(e) {
+    alert("Invalid formatting or Save Error: " + e.message);
+  }
+});
+
+async function initData() {
+  try {
+    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+    const snap = await getDoc(doc(window.db, "app_data", "Price List"));
+    if (snap.exists()) PRICING = snap.data().value;
+  } catch(e) {}
+  
+  renderShipment('');
+  renderPricing('');
+  renderDiscount('');
+  renderShowrooms('');
+  renderServiceCentres();
+}
+
+initData();
 </script>
 </body>
 </html>
